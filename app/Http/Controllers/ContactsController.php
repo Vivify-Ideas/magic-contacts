@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Contact;
+use App\Http\Requests\ContactRequest;
 use Illuminate\Http\Request;
 
 class ContactsController extends Controller
@@ -18,24 +19,33 @@ class ContactsController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ContactRequest/* Request */ $request)
     {
-        //
+        // first way to validate data
+        // $this->validate(
+        //     $request,
+        //     [
+        //         'first_name' => 'required',
+        //         'last_name' => 'required',
+        //         'email' => 'required|unique:contacts,email'
+        //     ]
+        // );
+
+        // second way to validate data
+        // $request->validate([
+        //     'first_name' => 'required',
+        //     'last_name' => 'required',
+        //     'email' => 'required|unique:contacts,email'
+        // ]);
+
+        return Contact::create(
+            $request->only([ 'first_name', 'last_name', 'email' ])
+        );
     }
 
     /**
@@ -46,18 +56,7 @@ class ContactsController extends Controller
      */
     public function show(Contact $contact)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Contact  $contact
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Contact $contact)
-    {
-        //
+        return $contact;
     }
 
     /**
@@ -67,9 +66,13 @@ class ContactsController extends Controller
      * @param  \App\Contact  $contact
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Contact $contact)
+    public function update(ContactRequest $request, Contact $contact)
     {
-        //
+        $contact->update(
+            $request->only([ 'first_name', 'last_name', 'email' ])
+        );
+
+        return $contact;
     }
 
     /**
@@ -80,6 +83,7 @@ class ContactsController extends Controller
      */
     public function destroy(Contact $contact)
     {
-        //
+        $contact->delete();
+        return $contact;
     }
 }
